@@ -11,8 +11,6 @@ class CountryController extends Controller
         $countries = Country::whereHas('currencies')
                     ->with('currencies:id,name,code')
                     ->get(['id', 'name', 'iso2', 'iso3']);
-
-    // $countries = Country::all();
                     
         return response()->json($countries);
     }
