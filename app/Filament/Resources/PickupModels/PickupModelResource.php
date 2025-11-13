@@ -9,6 +9,8 @@ use App\Filament\Resources\PickupModels\Schemas\PickupModelForm;
 use App\Filament\Resources\PickupModels\Tables\PickupModelsTable;
 use App\Models\PickupModel;
 use BackedEnum;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -55,6 +57,10 @@ class PickupModelResource extends Resource
             IconColumn::make('is_active')
              ->label('Active')
               ->boolean(),
+         ])
+         ->recordActions([
+            EditAction::make(),
+            DeleteAction::make(),
          ]);
     }
 
