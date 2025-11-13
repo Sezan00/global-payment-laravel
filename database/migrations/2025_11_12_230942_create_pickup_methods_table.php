@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('pickup_methods', function (Blueprint $table) {
             $table->id();
-            $table->string('method');
-            $table->string('details')->nullable();
+            $table->string('name');
+            $table->string('type')->nullable();
+            $table->string('is_active')->default(true);
             $table->timestamps();
         });
     }
