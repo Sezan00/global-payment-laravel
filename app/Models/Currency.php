@@ -19,4 +19,9 @@ class Currency extends Model
         ->withTimestamps();
 }
 
+    public function countryCurrencies()
+{
+    return $this->hasMany(CountryCurrencies::class);
+}
+
 }

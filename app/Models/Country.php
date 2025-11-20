@@ -13,7 +13,8 @@ class Country extends Model
         'flag_url',
     ];
     
-    public function currencies(){
+public function currencies()
+{
     return $this->belongsToMany(Currency::class, 'country_currencies')->withTimestamps();
 }
 

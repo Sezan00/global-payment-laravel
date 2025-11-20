@@ -49,7 +49,7 @@ class User extends Authenticatable
     }
 
     public function countryCurrency(){
-    return $this->belongsTo(CountryCurrencies::class);
+    return $this->hasMany(CountryCurrencies::class);
    }
 
    public function country(){
