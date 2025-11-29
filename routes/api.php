@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\ExhangeRatesController;
 use App\Http\Controllers\PurposeOfTransferController;
 use App\Http\Controllers\RateController;
 use App\Http\Controllers\RelationController;
@@ -34,7 +35,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // exchange currencies value 
-
     Route::get('/exhange-rate', [RateController::class, 'getRate']);
+
+    //exhange rate store by user
+    Route::post('/save-exchange', [ExhangeRatesController::class, 'ExchangeRateStore']);
 
 });
