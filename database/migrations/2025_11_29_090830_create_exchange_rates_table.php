@@ -13,12 +13,6 @@ return new class extends Migration
     {
         Schema::create('exchange_rates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('base_currency_id')->constrained('currencies');
-            $table->foreignId('target_currency_id')->constrained('currencies');
-            $table->decimal('rate', 15, 6);
-            $table->string('provider')->nullable();
-            $table->dateTime('effective_at');
-            $table->dateTime('expires_at')->nullable();
             $table->timestamps();
         });
     }
