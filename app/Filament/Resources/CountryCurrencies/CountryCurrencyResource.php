@@ -38,12 +38,17 @@ class CountryCurrencyResource extends Resource
             ->searchable()
             ->required(),
 
-        Select::make('currency_id')
-            ->label('Currency')
-            ->relationship('currency', 'name')
-            ->searchable()
-            ->required(),
-        ]);
+            Select::make('currency_id')
+                ->label('Currency')
+                ->relationship('currency', 'name')
+                ->searchable()
+                ->required(),
+
+            Select::make('type')
+                ->label('Type')
+                ->options(['sending' => 'Sending', 'receiving' => 'Receiving', 'both' => 'Both'])
+                ->required(),
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -52,6 +57,7 @@ class CountryCurrencyResource extends Resource
         ->columns([
             TextColumn::make('country.name')->label('Country'),
             TextColumn::make('currency.name')->label('Currency'),
+            TextColumn::make('type')->label('Type'),
         ])
         ->recordActions([
             EditAction::make(),

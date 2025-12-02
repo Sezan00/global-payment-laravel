@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Country;
+use App\Models\CountryCurrencies;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
@@ -35,6 +36,16 @@ class SuportController extends Controller
         }
 
         return response()->json($country->currencies);
-}
+    }
+
+    public function getAvailableCountires() {
+        $sender = CountryCurrencies::with('country', 'currency')->whereIn('type', ['sending', 'both'])->get();
+        $receiver = CountryCurrencies::with('country', 'currency')->whereIn('type', ['receiving', 'both'])->get();
+
+        return response()->json([
+            'sender' => $sender,
+            'receiver' => $receiver
+        ]);
+    }
 
 }

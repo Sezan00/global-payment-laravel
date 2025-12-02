@@ -33,6 +33,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/receiver/countries', [SuportController::class, 'indexCountry']);
     Route::get('/receiver/countries/{country}/currencies', [SuportController::class, 'getReceiverCurrencies']);
 
+    Route::get('/available-countries', [SuportController::class, 'getAvailableCountires']);
+
 
     // exchange currencies value 
     Route::get('/exhange-rate', [RateController::class, 'getRate']);

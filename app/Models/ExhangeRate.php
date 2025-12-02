@@ -10,9 +10,10 @@ class ExhangeRate extends Model
 
     protected $fillable = [
          'user_id',
-         'sender_currency',
-         'receiver_currency',
-         'converted_amount',
+         'sender_country_currenciy_id',
+         'receiver_country_currenciy_id',
+         'ex_rate',
+         'amount',
     ];
 
     public function user(){

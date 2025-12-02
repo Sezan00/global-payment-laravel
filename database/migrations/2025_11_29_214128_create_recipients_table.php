@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('exhange_rates', function (Blueprint $table) {
+        Schema::create('recipients', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->unsignedBigInteger('sender_country_currenciy_id');
-            $table->unsignedBigInteger('receiver_country_currenciy_id');
-            $table->float('ex_rate');
-            $table->float('amount');
+            $table->string('recipient_type'); //person / business
+            $table->string('name');
+            $table->unsignedBigInteger('country_id');
+            $table->unsignedBigInteger('currency_id');
+            $table->string('delivery_method'); //bank, cash, wallet
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('exhange_rates');
+        Schema::dropIfExists('recipients');
     }
 };
