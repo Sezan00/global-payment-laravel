@@ -6,6 +6,7 @@ use App\Http\Controllers\CountryController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\ExhangeRatesController;
 use App\Http\Controllers\PurposeOfTransferController;
+use App\Http\Controllers\QuotationsController;
 use App\Http\Controllers\RateController;
 use App\Http\Controllers\RelationController;
 use App\Http\Controllers\SourceOfFundController;
@@ -42,4 +43,10 @@ Route::middleware('auth:sanctum')->group(function () {
     //exhange rate store by user
     Route::post('/save-exchange', [ExhangeRatesController::class, 'ExchangeRateStore']);
 
+    //insert data to quotations table
+    Route::post('/quotation-store', [QuotationsController::class, 'store']);
+
+    //for confirm rate and amount show 
+
+    Route::get('confirm-cur/{id}', [QuotationsController::class, 'index']);
 });

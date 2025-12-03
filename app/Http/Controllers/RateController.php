@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CountryCurrencies;
 use App\Models\ExhangeRate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
@@ -39,7 +40,7 @@ class RateController extends Controller
             $rate = $rateData['rate'];
 
             $savedRate = ExhangeRate::create([
-                'user_id'   => auth()->user()->id,
+                'user_id'   => Auth::id(),
                 'sender_country_currenciy_id' => $source,
                 'receiver_country_currenciy_id' => $target,
                 'ex_rate'            => $rate,
