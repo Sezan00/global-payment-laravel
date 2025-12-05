@@ -13,14 +13,26 @@ return new class extends Migration
     {
         Schema::create('recipients', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('recipient_type'); //person / business
-            $table->string('name');
-            $table->unsignedBigInteger('country_id');
-            $table->unsignedBigInteger('currency_id');
-            $table->string('delivery_method'); //bank, cash, wallet
-            $table->string('email')->nullable();
+            $table->string('receive_type');
+                        
+            $table->string('full_name');
             $table->string('phone')->nullable();
+            $table->string('email')->nullable();
+
+            $table->string('country')->nullable();
+            $table->string('city')->nullable();
+            $table->string('address')->nullable();
+
+        
+            $table->string('bank_name')->nullable();
+            $table->string('bank_account')->nullable();
+
+
+            $table->string('wallet_type')->nullable();
+            $table->string('wallet_number')->nullable();
+
             $table->timestamps();
         });
     }

@@ -11,6 +11,7 @@ use App\Http\Controllers\RateController;
 use App\Http\Controllers\RelationController;
 use App\Http\Controllers\SourceOfFundController;
 use App\Http\Controllers\SuportController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -49,4 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
     //for confirm rate and amount show 
 
     Route::get('confirm-cur/{id}', [QuotationsController::class, 'index']);
+
+    //Transaction 
+
+    Route::post('trainsaction', [TransactionController::class, 'store']);
 });
