@@ -8,6 +8,7 @@ use App\Http\Controllers\ExhangeRatesController;
 use App\Http\Controllers\PurposeOfTransferController;
 use App\Http\Controllers\QuotationsController;
 use App\Http\Controllers\RateController;
+use App\Http\Controllers\RecipientController;
 use App\Http\Controllers\RelationController;
 use App\Http\Controllers\SourceOfFundController;
 use App\Http\Controllers\SuportController;
@@ -54,4 +55,11 @@ Route::middleware('auth:sanctum')->group(function () {
     //Transaction 
 
     Route::post('trainsaction', [TransactionController::class, 'store']);
+
+    //recipients section
+    Route::post('recipients/store', [RecipientController::class, 'store']);
+    Route::get('recipients-list', [RecipientController::class, 'RecipientsList']);
+    Route::get('recipients/{id}', [RecipientController::class, 'index']);
+
+    Route::get('/recipients/country/{id}', [CountryController::class, 'showCountryCurrencieFromQuation']);
 });

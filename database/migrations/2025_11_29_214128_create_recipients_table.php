@@ -15,13 +15,17 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+            $table->foreignId('target_country_currency_id')
+                   ->constrained('country_currencies')
+                   ->onDelete('cascade');
+                   
             $table->string('receive_type');
                         
             $table->string('full_name');
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
 
-            $table->string('country')->nullable();
             $table->string('city')->nullable();
             $table->string('address')->nullable();
 

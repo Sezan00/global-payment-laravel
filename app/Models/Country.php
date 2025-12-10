@@ -18,9 +18,12 @@ public function currencies()
     return $this->belongsToMany(Currency::class, 'country_currencies')->withTimestamps();
 }
 
-public function countryCurrencies()
-{
+public function countryCurrencies(){
     return $this->hasMany(CountryCurrencies::class);
 }
+
+ public function recipients(){
+    return $this->hasMany(Recipient::class);
+ }
 
 }
