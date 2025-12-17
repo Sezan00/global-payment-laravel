@@ -60,6 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('recipients/store', [RecipientController::class, 'store']);
     Route::get('recipients-list', [RecipientController::class, 'RecipientsList']);
     Route::get('recipients/{id}', [RecipientController::class, 'index']);
-
+    Route::put('recipient/edit/{id}', [RecipientController::class, 'update']);
+    Route::delete('recipient/delete/{id}', [RecipientController::class, 'Destroy']);
     Route::get('/recipients/country/{id}', [CountryController::class, 'showCountryCurrencieFromQuation']);
 });

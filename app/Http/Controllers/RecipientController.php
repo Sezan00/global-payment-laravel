@@ -76,4 +76,50 @@ class RecipientController extends Controller
        ], 200);
     }
 
+public function update(Request $request, $id){
+    $recipient = Recipient::findOrFail($id);
+
+    $allowedFields = [
+        'receive_type',
+        'full_name',
+        'phone',
+        'email',
+        'city',
+        'address',
+        'bank_name',
+        'bank_account',
+        'wallet_type',
+        'wallet_number',
+    ];
+
+    $request->validate([
+        'field' => 'required|string',
+        'value' => 'required'
+    ]);
+
+    if(!in_array($request->field, $allowedFields)){
+        return response()->json([
+            'message' => 'Invalid Field'
+        ], 422);
+    }
+
+    $recipient->{$request->field} = $request->value;
+    $recipient->save();
+
+    return response()->json([
+        'message' => 'Updated successfully',
+        'data' => $recipient
+    ]);
+}
+
+    public function Destroy($id){
+        $recipient = Recipient::findOrFail($id);
+        $recipient->delete();
+
+        return response()->json([
+            'message' => 'Data Delete'
+        ]);
+    }
+
+
 }
