@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\ExhangeRatesController;
+use App\Http\Controllers\MasterController;
 use App\Http\Controllers\PurposeOfTransferController;
 use App\Http\Controllers\QuotationsController;
 use App\Http\Controllers\RateController;
@@ -63,4 +64,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('recipient/edit/{id}', [RecipientController::class, 'update']);
     Route::delete('recipient/delete/{id}', [RecipientController::class, 'Destroy']);
     Route::get('/recipients/country/{id}', [CountryController::class, 'showCountryCurrencieFromQuation']);
+
+    //master api for fetch realtion source of fund and Purpouse of fund
+
+    Route::get('/master-data', [MasterController::class, 'index']);
 });

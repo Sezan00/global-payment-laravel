@@ -8,6 +8,7 @@ class Transaction extends Model
 {
     protected $fillable = [
         'quotation_id',
+        'recipient_id',
         'user_id',
         'source_country_currency_id',
         'target_country_currency_id',

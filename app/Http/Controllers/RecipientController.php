@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Quotation;
 use App\Models\Recipient;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -42,6 +43,12 @@ class RecipientController extends Controller
             'wallet_type'    => $request->wallet_type,
             'wallet_number'  => $request->wallet_number,
         ]);
+
+        $transacton = Transaction::where('quotation_id', $quotation->id)->first();
+        if($transacton){
+             $transacton->recipient_id = $recipient->id;
+             $transacton->save();
+        }
 
         return response()->json([
           'message' => 'data submited',
