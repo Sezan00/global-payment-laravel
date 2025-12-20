@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CountryCurrencies;
 use App\Models\Quotation;
 use App\Models\Recipient;
 use App\Models\Transaction;
@@ -12,26 +13,32 @@ use Illuminate\Support\Facades\Log;
 class RecipientController extends Controller
 {
     public function store(Request $request){
-        // $request->validate([
-        //   'target_country_currency_id' => 'required|exists:country_currencies,id',
-        //   'receive_type'   => 'string',
-        //   'full_name'      => 'string|max:30',
-        //   'phone'          => 'string',
-        //   'email'          => 'email',
-        //   'city'           => 'string|max:150',
-        //   'address'        => 'string|max:150',
-        //   'bank_name'      => 'string|max:30',
-        //   'bank_account'   => 'string|max:30',
-        //   'wallet_type'    => 'string|max:30',
-        //   'wallet_number'  => 'string|max:30',
-        // ]);
+        $request->validate([
+        'target_country_currency_id' => 'required|exists:country_currencies,id',
+        'receive_type'   => 'required|string',
+        'full_name'      => 'required|string|max:30',
+        'phone'          => 'required|string',
+        'email'          => 'nullable|email',
+        'city'           => 'nullable|string|max:150',
+        'address'        => 'nullable|string|max:150',
+        'bank_name'      => 'nullable|string|max:30',
+        'bank_account'   => 'nullable|string|max:30',
+        'wallet_type'    => 'nullable|string|max:30',
+        'wallet_number'  => 'nullable|string|max:30',
+        ]);
 
-        $quotation  = Quotation::findOrFail($request->quotation_id);
-        $targetCountryCurrency = $quotation->target_country_currency_id;
+         $countryCurrency = CountryCurrencies::where('id', $request->target_country_currency_id)
+                           ->whereIn('type', ['receiving', 'both'])->first();
+
+        if(!$countryCurrency){
+            return response()->json([
+              'message' => 'Invalid currency for receiving'
+            ],422); 
+        }
 
         $recipient = Recipient::create([
             'user_id'        => Auth::id(),
-            'target_country_currency_id' => $targetCountryCurrency,
+            'target_country_currency_id' =>  $request->target_country_currency_id,
             'receive_type'   => $request->receive_type,
             'full_name'      => $request->full_name,
             'phone'          => $request->phone,
@@ -43,12 +50,6 @@ class RecipientController extends Controller
             'wallet_type'    => $request->wallet_type,
             'wallet_number'  => $request->wallet_number,
         ]);
-
-        $transacton = Transaction::where('quotation_id', $quotation->id)->first();
-        if($transacton){
-             $transacton->recipient_id = $recipient->id;
-             $transacton->save();
-        }
 
         return response()->json([
           'message' => 'data submited',

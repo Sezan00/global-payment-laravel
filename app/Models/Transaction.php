@@ -11,6 +11,8 @@ class Transaction extends Model
         'recipient_id',
         'user_id',
         'source_country_currency_id',
+        'purpose_of_transfer_id',
+        'source_of_fund_id',
         'target_country_currency_id',
         'amount',
         'rate',

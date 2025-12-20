@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\CountryCurrencieController;
+use App\Http\Controllers\CountryCurrencies as ControllersCountryCurrencies;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\ExhangeRatesController;
 use App\Http\Controllers\MasterController;
@@ -14,6 +16,7 @@ use App\Http\Controllers\RelationController;
 use App\Http\Controllers\SourceOfFundController;
 use App\Http\Controllers\SuportController;
 use App\Http\Controllers\TransactionController;
+use App\Models\CountryCurrencies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -68,4 +71,8 @@ Route::middleware('auth:sanctum')->group(function () {
     //master api for fetch realtion source of fund and Purpouse of fund
 
     Route::get('/master-data', [MasterController::class, 'index']);
+    Route::put('/transaction/extra-info/{transaction}', [MasterController::class, 'Update']);
+
+    // country currencie show in recipient create page 
+    Route::get('/country-currencie', [CountryCurrencieController::class, 'index']);
 });
