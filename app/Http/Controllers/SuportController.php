@@ -39,7 +39,14 @@ class SuportController extends Controller
     }
 
     public function getAvailableCountires() {
-        $sender = CountryCurrencies::with('country', 'currency')->whereIn('type', ['sending', 'both'])->get();
+
+        $countryId = Auth::user()->country->id;
+
+        $sender = CountryCurrencies::with('country', 'currency')
+        ->where('country_id', $countryId)
+        ->whereIn('type', ['sending', 'both'])
+        ->get();
+        
         $receiver = CountryCurrencies::with('country', 'currency')->whereIn('type', ['receiving', 'both'])->get();
 
         return response()->json([

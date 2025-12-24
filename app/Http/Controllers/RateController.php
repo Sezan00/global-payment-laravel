@@ -25,16 +25,20 @@ class RateController extends Controller
 
         try {
             DB::beginTransaction();
-            $url = "https://api.sandbox.transferwise.tech/v1/rates?source=$sourceCurrency&target=$targetCurrency";
+            // $url = "https://api.sandbox.transferwise.tech/v1/rates?source=$sourceCurrency&target=$targetCurrency";
 
+
+            $url = "https://api.wise-sandbox.com/v1/rates?source=$sourceCurrency&target=$targetCurrency";
+            
             $response = Http::withToken(env('WISE_API_TOKEN'))->get($url);
 
             
-
+            // logger($response);
             if($response->failed()){
                 DB::rollBack();
                 return response()->json(['error' => 'API request failed']);
             }
+
 
             $rateData = $response->json()[0];
             $rate = $rateData['rate'];

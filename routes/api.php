@@ -61,8 +61,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('trainsaction', [TransactionController::class, 'store']);
 
     //recipients section
-    Route::post('recipients/store', [RecipientController::class, 'store']);
+    Route::post('recipients/store', [RecipientController::class, 'store']); //recipient Post to database
     Route::get('recipients-list', [RecipientController::class, 'RecipientsList']);
+    Route::get('recipients-show', [RecipientController::class, 'showDashboardIndex']);
     Route::get('recipients/{id}', [RecipientController::class, 'index']);
     Route::put('recipient/edit/{id}', [RecipientController::class, 'update']);
     Route::delete('recipient/delete/{id}', [RecipientController::class, 'Destroy']);

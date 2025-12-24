@@ -15,21 +15,23 @@ class RecipientController extends Controller
     public function store(Request $request){
         $request->validate([
         'target_country_currency_id' => 'required|exists:country_currencies,id',
-        'receive_type'   => 'required|string',
-        'full_name'      => 'required|string|max:30',
-        'phone'          => 'required|string',
-        'email'          => 'nullable|email',
-        'city'           => 'nullable|string|max:150',
-        'address'        => 'nullable|string|max:150',
-        'bank_name'      => 'nullable|string|max:30',
-        'bank_account'   => 'nullable|string|max:30',
-        'wallet_type'    => 'nullable|string|max:30',
-        'wallet_number'  => 'nullable|string|max:30',
+        'receive_type'               => 'required|string',
+        'full_name'                  => 'required|string|max:30',
+        'relation_id'                => 'required|exists:relations,id',
+        'phone'                      => 'required|string',
+        'email'                      => 'nullable|email',
+        'city'                       => 'nullable|string|max:150',
+        'address'                    => 'nullable|string|max:150',
+        'bank_name'                  => 'nullable|string|max:30',
+        'bank_account'               => 'nullable|string|max:30',
+        'wallet_type'                => 'nullable|string|max:30',
+        'wallet_number'              => 'nullable|string|max:30',
         ]);
 
          $countryCurrency = CountryCurrencies::where('id', $request->target_country_currency_id)
                            ->whereIn('type', ['receiving', 'both'])->first();
 
+        //   logger($countryCurrency);
         if(!$countryCurrency){
             return response()->json([
               'message' => 'Invalid currency for receiving'
@@ -41,6 +43,7 @@ class RecipientController extends Controller
             'target_country_currency_id' =>  $request->target_country_currency_id,
             'receive_type'   => $request->receive_type,
             'full_name'      => $request->full_name,
+            'relation_id'    => $request->relation_id,
             'phone'          => $request->phone,
             'email'          => $request->email,
             'city'           => $request->city,
@@ -58,16 +61,34 @@ class RecipientController extends Controller
     }   
 
 
-    public function RecipientsList(){
-        $recipiens = Recipient::with(
-            'quotation.targetCurrency.country',
-            'quotation.targetCurrency.currency'
-            )->where('user_id', Auth::id())
-            ->latest()
-            ->get();
+    public function RecipientsList(Request $request){
+
+        $quotationId = $request->query('quotation_id');
+
+        if(!$quotationId){
+            return response()->json([
+                'data'    => [],
+                'message' => 'Quation id not found'
+            ],400);
+        }
+
+        $quation = Quotation::find($quotationId);
+        if(!$quation){
+            return response()->json([
+                'data' => [],
+                'message' => 'Quation not found'
+            ]);
+        }
+        
+        $recipients = Recipient::with('countryCurrency', 'relation')
+                      ->where('user_id', Auth::id())
+                      ->where('target_country_currency_id', $quation->target_country_currency_id)
+                      ->get();
+
+  
 
         return response()->json([
-            'data' => $recipiens,
+            'data' => $recipients,
         ], 200);
     }
 
@@ -90,6 +111,7 @@ public function update(Request $request, $id){
     $allowedFields = [
         'receive_type',
         'full_name',
+        'relation_id',
         'phone',
         'email',
         'city',
@@ -127,6 +149,21 @@ public function update(Request $request, $id){
         return response()->json([
             'message' => 'Data Delete'
         ]);
+    }
+
+    public function showDashboardIndex(){
+
+           $recipients = Recipient::with(
+            'quotation.targetCurrency.country',
+            'quotation.targetCurrency.currency'
+            )->where('user_id', Auth::id() )
+            ->get();
+
+  
+
+        return response()->json([
+            'data' => $recipients,
+        ], 200);
     }
 
 

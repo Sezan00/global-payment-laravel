@@ -11,6 +11,7 @@ class Recipient extends Model
         'target_country_currency_id',
         'receive_type',
         'full_name',
+        'relation_id',
         'phone',
         'email',
         'city',
@@ -35,5 +36,9 @@ class Recipient extends Model
 
     public function quotation(){
         return $this->belongsTo(Quotation::class, 'quotation_id');
+    }
+
+    public function relation(){
+        return $this->belongsTo(Relation::class, 'relation_id');
     }
 }
