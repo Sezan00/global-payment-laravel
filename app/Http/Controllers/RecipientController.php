@@ -97,7 +97,9 @@ class RecipientController extends Controller
     public function index($id){
         $recipient = Recipient::with(
             'quotation.targetCurrency.country',
-            'quotation.targetCurrency.currency'
+            'quotation.targetCurrency.currency',
+            'countryCurrency.country',
+            'countryCurrency.currency',
             )->findOrFail($id);
 
        return response()->json([
@@ -112,6 +114,7 @@ public function update(Request $request, $id){
         'receive_type',
         'full_name',
         'relation_id',
+        'target_country_currency_id',
         'phone',
         'email',
         'city',
@@ -133,17 +136,35 @@ public function update(Request $request, $id){
         ], 422);
     }
 
+    // if($request->field === 'target_country_currency_id'){
+    //     $request->validate([
+    //         'value' => 'required|exists:country_currencies,id'
+    //     ]);
+    // }
+
+  if($request->field === 'target_country_currency_id' && $recipient->transactions()->exists()){
+     return response()->json([
+            'message' => 'Cannot change target_country_currency_id, recipient has transactions.'
+        ], 422);
+  } 
+
     $recipient->{$request->field} = $request->value;
     $recipient->save();
 
     return response()->json([
-        'message' => 'Updated successfully',
+        'message' => 'Updated Successfully',
         'data' => $recipient
     ]);
 }
 
     public function Destroy($id){
         $recipient = Recipient::findOrFail($id);
+
+        if($recipient->transactions()->exists()){
+            return response()->json([
+                'message' => 'You cannot delete this recipient'
+            ], 422);
+        }
         $recipient->delete();
 
         return response()->json([

@@ -41,4 +41,8 @@ class Recipient extends Model
     public function relation(){
         return $this->belongsTo(Relation::class, 'relation_id');
     }
+
+    public function transactions(){
+        return $this->hasMany(Transaction::class, 'recipient_id');
+    }
 }
