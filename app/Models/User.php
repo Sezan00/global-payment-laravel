@@ -22,7 +22,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'country_id'
+        'country_id',
+        'phone',
+        'dob',
+        'address_line1',
+        'city',
+        'post_code',
+        'wise_provider_id',
     ];
 
     /**

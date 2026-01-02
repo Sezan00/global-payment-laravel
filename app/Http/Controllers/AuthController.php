@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\wiseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -58,5 +59,34 @@ class AuthController extends Controller
         'user' => $user,
     ], 200);
 }
+
+
+ public function index($id){
+    $userInfo = User::with('country')->find($id);
+
+    return response()->json([
+      'userinfo' => $userInfo
+    ]);
+ }
+
+
+ public function updateProfile(Request $request){
+    $user = Auth::user();
+
+    $user->update([
+        'phone' => $request->phone,
+        'dob' => $request->dob,
+        'address_line1' => $request->address_line1,
+        'city' => $request->city,
+        'post_code' => $request->post_code,
+    ]);
+
+    if(!$user->wise_provider_id) {
+        app(wiseService::class)->connectUser($user);
+    }
+
+    return response()->json(['message' => 'Profile Update']);
+
+ }
 
 }

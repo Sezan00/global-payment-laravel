@@ -17,6 +17,7 @@ use App\Http\Controllers\SourceOfFundController;
 use App\Http\Controllers\SuportController;
 use App\Http\Controllers\TransactionController;
 use App\Models\CountryCurrencies;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -76,4 +77,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // country currencie show in recipient create page 
     Route::get('/country-currencie', [CountryCurrencieController::class, 'index']);
+
+
+    Route::get('edit-profile/{id}', [AuthController::class, 'index']);
+    Route::put('update-profile', [AuthController::class, 'updateProfile']);
 });
