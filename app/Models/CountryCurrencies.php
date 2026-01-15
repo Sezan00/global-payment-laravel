@@ -14,7 +14,7 @@ class CountryCurrencies extends Model
     }
 
     public function currency(){
-        return $this->belongsTo(Currency::class);
+        return $this->belongsTo(Currency::class, 'currency_id');
     }
 
     public function users()

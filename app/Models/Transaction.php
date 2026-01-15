@@ -17,6 +17,28 @@ class Transaction extends Model
         'amount',
         'rate',
         'converted_amount',
-        'status'
-    ];
+        'status',
+        'wise_quote_id',
+        'wise_transfer_id',
+        'wise_recipient_id',
+        'wise_status',
+        'wise_error',
+   ];
+        public function quotation(){
+            return $this->belongsTo(Quotation::class, 'quotation_id', 'id');
+        }
+
+        public function recipient(){
+            return $this->belongsTo(Recipient::class, 'recipient_id', 'id');
+        }
+
+        public function sourceOfFund(){
+            return $this->belongsTo(SourceFunds::class, 'source_of_fund_id', 'id');
+        }
+
+        public function user(){
+            return $this->belongsTo(User::class, 'user_id', 'id');
+        }
+
+  
 }

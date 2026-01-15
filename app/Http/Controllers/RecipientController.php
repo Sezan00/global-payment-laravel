@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CountryCurrencies;
 use App\Models\Quotation;
 use App\Models\Recipient;
+use App\Models\RecipientAttribute;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,10 +23,14 @@ class RecipientController extends Controller
         'email'                      => 'nullable|email',
         'city'                       => 'nullable|string|max:150',
         'address'                    => 'nullable|string|max:150',
+        'post_code'                  => 'nullable|string|max:40',
         'bank_name'                  => 'nullable|string|max:30',
         'bank_account'               => 'nullable|string|max:30',
         'wallet_type'                => 'nullable|string|max:30',
         'wallet_number'              => 'nullable|string|max:30',
+        'attributes.account_type' => 'required|string',
+            'attributes.swift_code' => 'nullable|string',
+            'attributes.legalType' => 'required|in:PRIVATE,BUSINESS',
         ]);
 
          $countryCurrency = CountryCurrencies::where('id', $request->target_country_currency_id)
@@ -48,15 +53,36 @@ class RecipientController extends Controller
             'email'          => $request->email,
             'city'           => $request->city,
             'address'        => $request->address,
+            'post_code'      => $request->post_code,
             'bank_name'      => $request->bank_name,
             'bank_account'   => $request->bank_account,
             'wallet_type'    => $request->wallet_type,
             'wallet_number'  => $request->wallet_number,
         ]);
 
+        // if($request->has('attributes')){
+        //     foreach($request->attributes as $key => $value){
+        //         RecipientAttribute::create([
+        //             'recipient_id' => $recipient->id,
+        //             'key'          => $key,
+        //             'value'        => $value,
+        //         ]);
+        //     }
+        // }
+
+                if($request->filled('attributes')){
+                    foreach((array) $request->input('attributes') as $key => $value){
+                        RecipientAttribute::create([
+                            'recipient_id' => $recipient->id,
+                            'key'          => $key,
+                            'value'        => $value,
+                        ]);
+                    }
+                }
+
         return response()->json([
           'message' => 'data submited',
-          'Data'    => $recipient
+          'Data'    => $recipient->load('attributes')
         ]);
     }   
 
@@ -72,8 +98,8 @@ class RecipientController extends Controller
             ],400);
         }
 
-        $quation = Quotation::find($quotationId);
-        if(!$quation){
+        $quotation = Quotation::find($quotationId);
+        if(!$quotation){
             return response()->json([
                 'data' => [],
                 'message' => 'Quation not found'
@@ -82,10 +108,10 @@ class RecipientController extends Controller
         
         $recipients = Recipient::with('countryCurrency', 'relation')
                       ->where('user_id', Auth::id())
-                      ->where('target_country_currency_id', $quation->target_country_currency_id)
+                      ->where('target_country_currency_id', $quotation->target_country_currency_id)
                       ->get();
 
-  
+        Log::info("Quation Currency ID" .  $quotation->target_country_currency_id);
 
         return response()->json([
             'data' => $recipients,
@@ -100,6 +126,7 @@ class RecipientController extends Controller
             'quotation.targetCurrency.currency',
             'countryCurrency.country',
             'countryCurrency.currency',
+            'attributes',
             )->findOrFail($id);
 
        return response()->json([
@@ -185,6 +212,18 @@ public function update(Request $request, $id){
         return response()->json([
             'data' => $recipients,
         ], 200);
+    }
+
+
+    public function recipientFields($senderCountryCode, $recipientCountryCode){
+        $filed = config("recipient_fields");
+
+        if(!$filed[$senderCountryCode][$recipientCountryCode]){
+            return response()->json([
+                'message' => 'No fileds found'
+            ], 404);
+        }
+        return response()->json($filed[$senderCountryCode][$recipientCountryCode]);
     }
 
 

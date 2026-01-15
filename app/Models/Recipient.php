@@ -8,6 +8,7 @@ class Recipient extends Model
 {
     protected $fillable = [
         'user_id',
+        'wise_recipient_id',
         'target_country_currency_id',
         'receive_type',
         'full_name',
@@ -16,6 +17,7 @@ class Recipient extends Model
         'email',
         'city',
         'address',
+        'post_code',
         'bank_name',
         'bank_account',
         'wallet_type',
@@ -44,5 +46,9 @@ class Recipient extends Model
 
     public function transactions(){
         return $this->hasMany(Transaction::class, 'recipient_id');
+    }
+
+    public function attributes(){
+        return $this->hasMany(RecipientAttribute::class, 'recipient_id');
     }
 }

@@ -62,4 +62,8 @@ class User extends Authenticatable
     return $this->belongsTo(Country::class);
    }
 
+   public function transaction(){
+    return $this->hasMany(Transaction::class);
+   }
+
 }

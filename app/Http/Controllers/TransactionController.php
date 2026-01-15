@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessWiseTransfer;
 use App\Models\Quotation;
+use App\Models\Recipient;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class TransactionController extends Controller
 {
@@ -14,6 +18,10 @@ class TransactionController extends Controller
             'quotation_id' => "required|exists:quotations,id",
             'recipient_id' => 'required|exists:recipients,id',
         ]);
+
+         $user = Auth::user();
+         $recipient = Recipient::find($request->recipient_id);
+         
 
         $quotation = Quotation::with('exhangeRate', 'sourceCurrency', 'targetCurrency')->findOrFail($request->quotation_id);
 
@@ -33,4 +41,44 @@ class TransactionController extends Controller
             'data'   => $transaction
         ]);
     }
+
+
+    public function ShowTransaction($id){
+         $transaction = Transaction::with(
+            'quotation.sourceCurrency.country',
+            'quotation.sourceCurrency.currency',
+            'quotation.targetCurrency.country',
+            'quotation.targetCurrency.currency',
+            'recipient',
+            'sourceOfFund',
+            'user'
+            )
+            ->findOrFail($id);
+
+         return response()->json([
+            'transaction' => $transaction
+         ]);
+    }
+
+   public function send($id){
+
+    $transaction = Transaction::findOrFail($id);
+
+    if ($transaction->status === 'processing') {
+        return response()->json([
+            'message' => 'Transfer already processing'
+        ], 409);
+    }
+
+    ProcessWiseTransfer::dispatch(
+        $transaction->user_id,
+        $transaction->recipient_id,
+        $transaction->id
+    );
+
+    return response()->json([
+        'message' => 'Transfer processing started'
+    ]);
+}
+
 }

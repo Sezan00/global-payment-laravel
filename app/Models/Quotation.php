@@ -27,4 +27,8 @@ class Quotation extends Model
     public function targetCurrency() {
     return $this->belongsTo(CountryCurrencies::class, 'target_country_currency_id');
     }
+
+    public function transaction(){
+        return $this->hasMany(Transaction::class);
+    }
 }

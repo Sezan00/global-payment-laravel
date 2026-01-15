@@ -29,7 +29,7 @@ Route::get('/country', [CountryController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
-    
+
 
     Route::get('/relations', [RelationController::class, 'index']);
     Route::get('/sourcefunds', [SourceOfFundController::class, 'index']);
@@ -81,4 +81,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('edit-profile/{id}', [AuthController::class, 'index']);
     Route::put('update-profile', [AuthController::class, 'updateProfile']);
+
+    // Transaction preview page 
+    Route::get('transaction-view/{id}', [TransactionController::class, 'ShowTransaction']);
+    //Wise Provider id got
+    Route::post('/transactions/{id}/send', [TransactionController::class, 'send']);
+
+    //Recipients Dynamic filed
+    Route::get('/recipient-fields/{senderCountry}/{recipientCurrency}', [RecipientController::class, 'recipientFields']);;
 });

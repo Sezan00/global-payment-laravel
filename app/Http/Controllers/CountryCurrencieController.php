@@ -10,7 +10,7 @@ class CountryCurrencieController extends Controller
     public function index(){
         
      $data = CountryCurrencies::with([
-        'country:id,name',
+        'country:id,name,iso3',
         'currency:id,name,code'
      ])
      ->whereIn('type', ['both', 'receiving'])->get()->groupBy('country_id');
