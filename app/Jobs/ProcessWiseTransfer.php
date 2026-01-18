@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 class ProcessWiseTransfer implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    
     //stake/data holder -- Database serialize 
     public $userId;
     public $recipientId;

@@ -88,5 +88,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/transactions/{id}/send', [TransactionController::class, 'send']);
 
     //Recipients Dynamic filed
-    Route::get('/recipient-fields/{senderCountry}/{recipientCurrency}', [RecipientController::class, 'recipientFields']);;
+    Route::get('/recipient-fields/{senderCountry}/{recipientCurrency}', [RecipientController::class, 'recipientFields']);
+
+    //User data check
+     Route::get('usercurrency', [CurrencyController::class, 'UserSourceCurrencySelect']);
+
 });

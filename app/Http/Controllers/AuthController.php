@@ -18,6 +18,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|unique:users,email',
             'password' => 'required|string|min:1|confirmed',
             'country_id' => 'required|exists:countries,id',
+            'country_currency_id' => 'required|exists:country_currencies_id'
         ]);
 
         $user = User::create([
@@ -25,6 +26,7 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'country_id' => $validated['country_id'],
+            'country_currency_id' => $validated['country_currency_id']
         ]);
 
         return response()->json([
@@ -88,5 +90,6 @@ class AuthController extends Controller
     return response()->json(['message' => 'Profile Update']);
 
  }
+
 
 }

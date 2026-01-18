@@ -16,6 +16,7 @@ class RecipientController extends Controller
     public function store(Request $request){
         $request->validate([
         'target_country_currency_id' => 'required|exists:country_currencies,id',
+        'source_country_currency_id' => 'required|exists:country_currencies,id',
         'receive_type'               => 'required|string',
         'full_name'                  => 'required|string|max:30',
         'relation_id'                => 'required|exists:relations,id',
@@ -45,19 +46,20 @@ class RecipientController extends Controller
 
         $recipient = Recipient::create([
             'user_id'        => Auth::id(),
+            'source_country_currency_id' => $request->source_country_currency_id,
             'target_country_currency_id' =>  $request->target_country_currency_id,
-            'receive_type'   => $request->receive_type,
-            'full_name'      => $request->full_name,
-            'relation_id'    => $request->relation_id,
-            'phone'          => $request->phone,
-            'email'          => $request->email,
-            'city'           => $request->city,
-            'address'        => $request->address,
-            'post_code'      => $request->post_code,
-            'bank_name'      => $request->bank_name,
-            'bank_account'   => $request->bank_account,
-            'wallet_type'    => $request->wallet_type,
-            'wallet_number'  => $request->wallet_number,
+            'receive_type'               => $request->receive_type,
+            'full_name'                  => $request->full_name,
+            'relation_id'                => $request->relation_id,
+            'phone'                      => $request->phone,
+            'email'                      => $request->email,
+            'city'                       => $request->city,
+            'address'                    => $request->address,
+            'post_code'                  => $request->post_code,
+            'bank_name'                  => $request->bank_name,
+            'bank_account'               => $request->bank_account,
+            'wallet_type'                => $request->wallet_type,
+            'wallet_number'              => $request->wallet_number,
         ]);
 
         // if($request->has('attributes')){

@@ -81,7 +81,7 @@ class WiseService
             ),
         ];
 
-        logger('payload', ['payload' => $payload]);
+        // logger('payload', ['payload' => $payload]);
 
 
         try {
@@ -92,12 +92,8 @@ class WiseService
                 $recipient->update(['wise_recipient_id' => $data['id']]);
                 return $data;
             }
-
-
-            Log::error('Wise id not found in response', $data);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $errorBody = json_decode($e->getResponse()->getBody()->getContents(), true);
-            Log::error('Wise API Error', $errorBody);
             throw $e;
         }
     }
@@ -106,11 +102,11 @@ class WiseService
 
     public function createQuote(User $user, Recipient $recipient, $amount)
     {
-        Log::info('WISE: createQuote called', [
-            'user_id' => $user->id,
-            'recipient_id' => $recipient->id,
-            'amount' => $amount
-        ]);
+        // Log::info('WISE: createQuote called', [
+        //     'user_id' => $user->id,
+        //     'recipient_id' => $recipient->id,
+        //     'amount' => $amount
+        // ]);
 
         $payload = [
             'sourceCurrency' => 'USD',
