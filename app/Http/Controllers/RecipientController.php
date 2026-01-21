@@ -113,8 +113,6 @@ class RecipientController extends Controller
                       ->where('target_country_currency_id', $quotation->target_country_currency_id)
                       ->get();
 
-        Log::info("Quation Currency ID" .  $quotation->target_country_currency_id);
-
         return response()->json([
             'data' => $recipients,
         ], 200);
@@ -129,6 +127,7 @@ class RecipientController extends Controller
             'countryCurrency.country',
             'countryCurrency.currency',
             'attributes',
+            'sourceContryCurrency.currency'
             )->findOrFail($id);
 
        return response()->json([

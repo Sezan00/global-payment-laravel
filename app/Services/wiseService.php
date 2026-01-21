@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\Recipient;
 use App\Models\Transaction;
+use App\Models\WiseQuote;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
 use Nette\Utils\Json;
@@ -61,7 +62,7 @@ class WiseService
             $recipient->user->update(['wise_provider_id' => $profileId]);
             $recipient->user->refresh();
         }
-        
+
 
         $payload = [
             'currency' => $recipient->countryCurrency?->currency?->code,
@@ -81,9 +82,6 @@ class WiseService
             ),
         ];
 
-        // logger('payload', ['payload' => $payload]);
-
-
         try {
             $response = $this->client->post('v1/accounts', ['json' => $payload]);
             $data     = json_decode($response->getBody(), true);
@@ -102,27 +100,45 @@ class WiseService
 
     public function createQuote(User $user, Recipient $recipient, $amount)
     {
-        // Log::info('WISE: createQuote called', [
-        //     'user_id' => $user->id,
-        //     'recipient_id' => $recipient->id,
-        //     'amount' => $amount
-        // ]);
 
         $payload = [
-            'sourceCurrency' => 'USD',
+            'sourceCurrency' => $recipient->sourceContryCurrency?->currency?->code,
             'targetCurrency' => $recipient->countryCurrency?->currency?->code,
-            'sourceAmount' => $amount,
+            'sourceAmount'   => null,
+            'targetAmount'   => $amount,
+            'pricingConfiguration' => [
+                'fee' => [
+                    'type'     => 'OVERRIDE',
+                    'variable' => 0.011,
+                    'fixed'    => 15.42,
+                ]
+            ],
             'profile' => $user->wise_provider_id,
-            'targetAccount' => $recipient->wise_recipient_id,
-            'rateType' => 'FIXED',
         ];
+        
+        $userWiseId = $user->wise_provider_id;
+        logger('User Wise Getting to User Wise', ['userWiseId' => $userWiseId]);
+        logger('Quote Payload', $payload);
 
-        $response = $this->client->post('v3/quotes', ['json' => $payload]);
+        $response = $this->client->post('v3/profiles/'.$userWiseId.'/quotes', ['json' => $payload]);
         $data = json_decode($response->getBody(), true);
 
-        Log::info('WISE: createQuote response', $data);
+        // logger('create Quote', $data);
+        logger($data['profile'] ?? null);
 
-        return $data;
+            
+        $wiseQuote = WiseQuote::create([
+            'profile_id'      => $user->wise_provider_id,
+            'wise_quote_id'   => $data['id'],
+            'source_currency' => $data['sourceCurrency'],
+            'target_currency' => $data['targetCurrency'],
+            'target_amount'   => $data['targetAmount'],
+            'status'          => $data['status'] ?? 'PENDING',
+            'raw_response'    => $data,
+        ]);
+
+        logger('Insert Quote Data', $wiseQuote);
+        return $wiseQuote;
     }
 
 

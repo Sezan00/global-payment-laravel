@@ -32,7 +32,7 @@ class ProcessWiseTransfer implements ShouldQueue
     public function handle(WiseService $wiseService): void
     {
         $user = User::find($this->userId);
-        $recipient = Recipient::with('attributes', 'user', 'countryCurrency.currency', 'countryCurrency.country')->find($this->recipientId);
+        $recipient = Recipient::with('attributes', 'user', 'countryCurrency.currency', 'sourceContryCurrency.currency')->find($this->recipientId);
         $transaction = Transaction::find($this->transactionId);
         $attrs = $recipient->attributes->pluck('value', 'key')->toArray();
 
@@ -79,7 +79,6 @@ class ProcessWiseTransfer implements ShouldQueue
                 'wise_status'      => $transfer['status'] ?? null,
                 'status'           => 'complete'
             ]);
-            Log::info("WISE Job completed", ['transaction_id' => $transaction->id]);
         } catch (\Throwable $e) {
 
             $transaction->update([

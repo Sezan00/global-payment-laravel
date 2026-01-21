@@ -33,6 +33,10 @@ class Recipient extends Model
         return $this->belongsTo(Country::class);
     }
 
+    public function sourceContryCurrency(){
+        return $this->belongsTo(CountryCurrencies::class, 'source_country_currency_id');
+    }
+
     public function countryCurrency(){
         return $this->belongsTo(CountryCurrencies::class, 'target_country_currency_id');
     }
