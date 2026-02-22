@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ProcessWiseTransfer;
+use App\Models\Payment;
 use App\Models\Quotation;
 use App\Models\Recipient;
 use App\Models\Transaction;
@@ -75,6 +76,7 @@ class TransactionController extends Controller
         $transaction->recipient_id,
         $transaction->id
     );
+
 
     return response()->json([
         'message' => 'Transfer processing started'

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Payment;
 use App\Models\Recipient;
 use App\Models\Transaction;
 use App\Models\User;
@@ -79,11 +80,31 @@ class ProcessWiseTransfer implements ShouldQueue
                 'wise_status'      => $transfer['status'] ?? null,
                 'status'           => 'complete'
             ]);
+
+            Payment::create([
+                'user_id'        => $transaction->user_id,
+                'amount'         => $transaction->amount,
+                'reference'      => 'PAY-' . strtoupper(uniqid()),
+                'transaction_id' => $transfer['id'],
+                'status'         => 'success',
+                'payment_method' => 'wise',
+                'description'    => 'Transfer to ' . $transaction->recipient->full_name,
+            ]);
         } catch (\Throwable $e) {
 
             $transaction->update([
                 'status'     => 'failed',
                 'wise_error' => $e->getMessage()
+            ]);
+
+              Payment::create([
+                'user_id'        => $transaction->user_id,
+                'amount'         => $transaction->amount,
+                'reference'      => 'PAY-' . strtoupper(uniqid()),
+                'transaction_id' => $transaction->wise_transfer_id ?? null,
+                'status'         => 'failed',
+                'payment_method' => 'wise',
+                'description'    => 'Failed transfer to ' . $transaction->recipient->full_name,
             ]);
 
             throw $e;

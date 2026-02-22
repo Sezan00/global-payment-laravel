@@ -6,8 +6,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    // শুধু React dev server origin দাও
-    'allowed_origins' => ['http://localhost:5173'],
+    'allowed_origins' => ['http://localhost:5174'],
 
     'allowed_origins_patterns' => [],
 
@@ -17,7 +16,6 @@ return [
 
     'max_age' => 0,
 
-    // যদি তুমি cookie/token পাঠাও তাহলে true করো
     'supports_credentials' => true,
 
 ];

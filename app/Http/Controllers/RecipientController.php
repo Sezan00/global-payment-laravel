@@ -29,9 +29,9 @@ class RecipientController extends Controller
         'bank_account'               => 'nullable|string|max:30',
         'wallet_type'                => 'nullable|string|max:30',
         'wallet_number'              => 'nullable|string|max:30',
-        'attributes.account_type' => 'required|string',
+        'attributes.account_type' => 'nullable|string',
             'attributes.swift_code' => 'nullable|string',
-            'attributes.legalType' => 'required|in:PRIVATE,BUSINESS',
+            'attributes.legalType' => 'nullable|in:PRIVATE,BUSINESS',
         ]);
 
          $countryCurrency = CountryCurrencies::where('id', $request->target_country_currency_id)
