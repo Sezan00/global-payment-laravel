@@ -38,4 +38,8 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'secret' => env('STRIPE_API'),
+    ],
+
 ];

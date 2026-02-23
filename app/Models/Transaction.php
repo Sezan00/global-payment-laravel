@@ -9,6 +9,7 @@ class Transaction extends Model
     protected $fillable = [
         'quotation_id',
         'recipient_id',
+        'payment_id',
         'user_id',
         'source_country_currency_id',
         'purpose_of_transfer_id',
@@ -38,6 +39,18 @@ class Transaction extends Model
 
         public function user(){
             return $this->belongsTo(User::class, 'user_id', 'id');
+        }
+
+        public function payment(){
+            return $this->hasMany(Payment::class);
+        }
+
+        public function targetCountryCurrency(){
+            return $this->belongsTo(CountryCurrencies::class, 'target_country_currency_id');
+        }
+
+        public function sourceCountryCurrency(){
+            return $this->belongsTo(CountryCurrencies::class, 'source_country_currency_id');
         }
 
   

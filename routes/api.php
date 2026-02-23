@@ -14,6 +14,7 @@ use App\Http\Controllers\RateController;
 use App\Http\Controllers\RecipientController;
 use App\Http\Controllers\RelationController;
 use App\Http\Controllers\SourceOfFundController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\SuportController;
 use App\Http\Controllers\TransactionController;
 use App\Models\CountryCurrencies;
@@ -92,5 +93,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //User data check
      Route::get('usercurrency', [CurrencyController::class, 'UserSourceCurrencySelect']);
-
+     Route::post('/create-checkout-session', [StripeController::class, 'CheckOut']);
 });
