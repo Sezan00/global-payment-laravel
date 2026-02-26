@@ -37,11 +37,22 @@ class ProcessPayoutJob implements ShouldQueue
         
         $user = $transaction->user;
         // logger('user data:' . $user);
-        //contry code
-        $countryCode = $transaction->recipient->sourceContryCurrency->country->iso3;
+        //Source Country code
+        $SourceCountryCode = $transaction->recipient->sourceContryCurrency->country->iso3;
+        //target currency code
+        $targetCurrencyCode = $transaction->recipient->countryCurrency->currency->code;
+        //Sorce Currency code 
+        $sourceCurrencyCode = $transaction->recipient->sourceContryCurrency->currency->code;
+        $recipientID = $transaction->recipient->id;
+        $recipient = $transaction->recipient; 
+        //target country code
+        $targetCountryCode = $transaction->recipient->countryCurrency->country->iso3;
+        // logger('Recipient Target Country Code:' . $targetCountryCode);
+        // logger('Target Currency:' . $targetCurrencyCode);
+        // logger('Recipient Full Data:' . $recipient);
 
-        logger('Country Code:' . $countryCode);
-        Log::info('Country Code', ['country code' => $countryCode]);
+        // logger('Country Code:' . $SourceCountryCode);
+        Log::info('Country Code', ['country code' => $SourceCountryCode]);
         if(!$user) Log::error('Transaction has no user');
             if(!$transaction->sourceCountryCurrency || !$transaction->sourceCountryCurrency->country) {
                 // Log::error('Country relation missing');
@@ -52,7 +63,7 @@ class ProcessPayoutJob implements ShouldQueue
                 'first_name'   => $user->name,
                 'last_name'    => 'Molla',
                 'email'        => $user->email,
-                'country_code' => $countryCode,
+                'country_code' => $SourceCountryCode,
             ]);
                 // Log::info('Status Code', ['status' => $response->status()]);
                 // Log::info('Response Body', ['body' => $response->body()]);
@@ -67,8 +78,53 @@ class ProcessPayoutJob implements ShouldQueue
                     throw new \Exception('Individual creation failed');
                 }
             }
+        
+        $destinationResponse = Http::acceptJson()->post('http://127.0.0.1:9000/api/destination', [
+                'type'         => 'Bank',
+                'recipient_id' => [
+                    'individual_id' => $user->individual_id
+                ],
+                'currency'     => $targetCurrencyCode,
+                'country_code' => $targetCountryCode,
+        ]);
+            // logger('Destination API Full Response:', $destinationResponse->json());
+            if($destinationResponse->successful()){
+                $desinationId = $destinationResponse->json('data.destination_id');
+                $recipient->update([
+                    'destination_id' => $desinationId
+                ]);
+            }
+         //quote section 
+            // $quoteResponse = Http::acceptJson()->post('http://127.0.0.1:9000/api/quote', [
+            //     'mode'                   => 'Transaction',
+            //     'destination_country'    => $targetCountryCode,
+            //     'destination_account_id' => $recipient->user_id,
+            //     'sending_currency'       => $SourceCountryCode,
+            //     'receiving_currency'     => $targetCurrencyCode, 
+                
+            // ]);
+
+            //Transaction Section
+         $transactionResponse = Http::acceptJson()->post('http://127.0.0.1:9000/api/transfer',[
+                'destination_account_id' => $recipient->user_id,
+                'user_id'                => $user->id,
+                'mode'                   => 'transaction',
+                'sending_currency'       => $SourceCountryCode,
+                'receiving_currency'     => $targetCurrencyCode,
+                'source_of_funds'        => $transaction->sourceOfFund->source_fund,
+                'purpose_of_transfer'    =>  $transaction->purposeOfTransfer->purpose_transfer,
+                'relationship'           => $transaction->recipient->relation->relation,
+            ]);
+            // logger('Transaction API Full Response:', $transactionResponse->json());
+            if($transactionResponse->successful()){
+                $transactionId = $transactionResponse->json('transaction.transaction_id');
+                logger('Transaction API ID:', [$transactionId]);
+             $update = $transaction->update([
+                    'transactions_api_id' => $transactionId
+                ]);
+                logger('Update result:' . $update);
+            }
         } catch (\Exception $e) {
-            // Handle Stripe errors
             Log::error('Stripe Payout Failed: ' . $e->getMessage());
         }
     }

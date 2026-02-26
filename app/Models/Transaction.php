@@ -8,6 +8,7 @@ class Transaction extends Model
 {
     protected $fillable = [
         'quotation_id',
+        'transactions_api_id',
         'recipient_id',
         'payment_id',
         'user_id',
@@ -32,7 +33,9 @@ class Transaction extends Model
         public function recipient(){
             return $this->belongsTo(Recipient::class, 'recipient_id', 'id');
         }
-
+        public function purposeOfTransfer(){
+            return $this->belongsTo(PurposeTransfer::class, 'purpose_of_transfer_id', 'id');
+        }
         public function sourceOfFund(){
             return $this->belongsTo(SourceFunds::class, 'source_of_fund_id', 'id');
         }

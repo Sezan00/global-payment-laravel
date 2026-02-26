@@ -8,6 +8,7 @@ class Recipient extends Model
 {
     protected $fillable = [
         'user_id',
+        'destination_id',
         'wise_recipient_id',
         'target_country_currency_id',
         'source_country_currency_id',
