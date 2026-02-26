@@ -13,6 +13,7 @@ class Payment extends Model
         'reference',
         'transaction_id',
         'status',
+        'checkout_session',
         'payment_method',
         'description',
     ];

@@ -94,4 +94,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //User data check
      Route::get('usercurrency', [CurrencyController::class, 'UserSourceCurrencySelect']);
      Route::post('/create-checkout-session', [StripeController::class, 'CheckOut']);
+        Route::get('stripe-session', [StripeController::class, 'getCheckoutSession']);
+
 });
+
