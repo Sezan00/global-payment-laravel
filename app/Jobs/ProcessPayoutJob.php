@@ -45,13 +45,18 @@ class ProcessPayoutJob implements ShouldQueue
         $sourceCurrencyCode = $transaction->recipient->sourceContryCurrency->currency->code;
         $recipientID = $transaction->recipient->id;
         $recipient = $transaction->recipient; 
+        // logger('Recipient:', ['recipient' => $recipient]);
         //target country code
         $targetCountryCode = $transaction->recipient->countryCurrency->country->iso3;
         // logger('Recipient Target Country Code:' . $targetCountryCode);
         // logger('Target Currency:' . $targetCurrencyCode);
         // logger('Recipient Full Data:' . $recipient);
-
         // logger('Country Code:' . $SourceCountryCode);
+
+        $bankname =$recipient->bank_name;
+        $accountNumber =$recipient->bank_account;
+        // Log::info('bank name', ['bank name' => $bankname]);
+        logger('Account Number:' . $accountNumber);
         Log::info('Country Code', ['country code' => $SourceCountryCode]);
         if(!$user) Log::error('Transaction has no user');
             if(!$transaction->sourceCountryCurrency || !$transaction->sourceCountryCurrency->country) {
@@ -78,16 +83,21 @@ class ProcessPayoutJob implements ShouldQueue
                     throw new \Exception('Individual creation failed');
                 }
             }
-        
         $destinationResponse = Http::acceptJson()->post('http://127.0.0.1:9000/api/destination', [
                 'type'         => 'Bank',
                 'recipient_id' => [
                     'individual_id' => $user->individual_id
                 ],
+                'account' => [
+                    'recipient_name' => $recipient->user->name,
+                    'bank_name'      => $recipient->bank_account,
+                    'account_number'  => $accountNumber,
+                 ],
                 'currency'     => $targetCurrencyCode,
                 'country_code' => $targetCountryCode,
         ]);
-            // logger('Destination API Full Response:', $destinationResponse->json());
+          
+            logger('Destination API Full Response:', $destinationResponse->json());
             if($destinationResponse->successful()){
                 $desinationId = $destinationResponse->json('data.destination_id');
                 $recipient->update([
