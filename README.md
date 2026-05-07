@@ -32,3 +32,7 @@ This project was built to manage global payment operations efficiently using a p
 - 📊 Admin Dashboard
 - 🧾 Transaction Records
 - 🔐 Authentication & Authorization
+
+## 🎥 Demo Video
+
+[![Watch Demo](https://img.youtube.com/vi/odTBn4ikMFU/0.jpg)](https://youtu.be/odTBn4ikMFU)
